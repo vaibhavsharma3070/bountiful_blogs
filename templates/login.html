@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'index.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+
+<body>
+    {% if message %}
+        <div id="snackbar">
+            {{ message|escapejs }}
+        </div>
+    {% endif %}
+    <div class="container">
+        <div class="register-box">
+            <h1>Sign Into Your Account</h1>
+            <form action="" method="POST">{% csrf_token %}
+                <div class="form-group form-box">
+                    <input type="email" name="email" class="form-control" placeholder="Email" aria-label="Full Name">
+                </div>
+                <div class="form-group form-box form-box-input">
+                    <input type="password" name="password" class="form-control" autocomplete="off"
+                        placeholder="Password" aria-label="Password">
+                </div>
+
+                <div class="clearfix forget-link-group">
+                    <div class="form-group">
+                        <input type="checkbox" id="html">
+                        <label for="html">Remember me</label>
+                    </div>
+                    <div class="forget-link">
+                        <a href="#">Forgot Password</a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn-md btn-theme w-100">Login</button>
+                </div>
+                <!-- <div class="social-list">
+                    <span>Or Login With</span>
+                    <a href="#" class="facebook-bg">
+                        <i class="fa-brands fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="twitter-bg">
+                        <i class="fa-brands fa-twitter"></i>
+                    </a>
+                    <a href="#" class="google-bg">
+                        <i class="fa-brands fa-google"></i>
+                    </a>
+                    <a href="#" class="linkedin-bg">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                    </a>
+                </div> -->
+            </form>
+            <div class="login-here">
+                <p>Don't have an account?</p>
+                <a href={% url 'register' %}>Register here</a>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="ripple-background">
+        <div class="circle xxlarge shade1"></div>
+        <div class="circle xlarge shade2"></div>
+        <div class="circle large shade3"></div>
+        <div class="circle mediun shade4"></div>
+        <div class="circle small shade5"></div>
+    </div> -->
+    <script>
+        // Function to show the Snackbar
+        function showSnackbar(message) {
+            var snackbar = document.getElementById("snackbar");
+            snackbar.innerHTML = message;
+            snackbar.className = "show";
+            setTimeout(function(){ snackbar.className = snackbar.className.replace("show", ""); }, 3000); // 3 seconds
+        }
+
+        // Trigger Snackbar with the message from Django view
+        {% if message %}
+        showSnackbar("{{ message|escapejs }}");
+        {% endif %}
+    </script>
+</body>
+
+</html>

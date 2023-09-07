@@ -1,0 +1,50 @@
+{% comment %} ======== header section ======== {% endcomment %}
+<section class="header">
+    <div class="container">
+        <div class="progressbar-box">
+            <div class="player-btn-progressbar-box">
+                <div class="player-btn-icon">
+                    <div class="play-pause">
+                        <i class="fa-solid fa-play"></i>
+                        <i class="fa-solid fa-pause"></i>
+                    </div>
+                    <i class="fa-solid fa-stop"></i>
+                    <i class="fa-solid fa-backward"></i>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="myBar"></div>
+                </div>
+            </div>
+            <div class="progressbar">
+                <div class="profile-author">
+                    <i class="fa-solid fa-user"></i>
+                    <div class="profile-author-dropdown">
+                        <ul>
+                            <li><a>{{request.user.first_name}}</a></li>
+                            <li><a class="Logout-btn" href={% url 'logout' %}>Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+{% comment %} ======== header section ======== {% endcomment %}
+
+<div class="content-tab-section">
+    <div class="tab-navigation">
+        <div class="container">
+            <div class="tab-nav">
+                <ul class="nav nav-tabs">
+                    <li class={% if request.path_info == "/" %}active{% endif %}><a href={% url 'home' %}>Settings</a></li>
+                    <li class={% if request.path_info == "/projects/" %}active{% endif %}><a href={% url 'projects' %}>Project Management</a></li>
+                    <li class={% if request.path_info == "/articles/" %}active{% endif %}><a href={% url 'articles' %}>Imported Articles</a></li>
+                    <li class={% if request.path_info == "" %}active{% endif %}><a href="#">Rewiew Search Tags</a></li>
+                    <li class={% if request.path_info == "" %}active{% endif %}><a href="#">Rewiew Image Tags</a></li>
+                    <li class={% if request.path_info == "" %}active{% endif %}><a href="#">Review Logs</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

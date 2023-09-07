@@ -1,0 +1,122 @@
+{% extends 'base.html' %} {% block content %}
+<div id="home" class="tab-pane fade in active">
+  <div class="settting-tab-content">
+    <form method="POST">{% csrf_token %}
+      <div class="tab-label-content open-api api-box">
+        <label for="#">OpenAI API key:</label>
+        <input
+          value="{{settings_data.openai_key}}"
+          type="text"
+          name="openai_key"
+        />
+      </div>
+      <div class="tab-label-content api-key api-box">
+        <label for="#">Envato Element API key:</label>
+        <input
+          value="{{settings_data.envato_key}}"
+          type="text"
+          name="envato_key"
+        />
+      </div>
+      <div class="tab-label-content main-max-tabs">
+        <label for="#">Min. and max. images per article:</label>
+        <div class="min-max-input">
+          <input
+            value="{{settings_data.min_image}}"
+            type="text"
+            name="min_image"
+          />
+          <span>And</span>
+          <input
+            value="{{settings_data.max_size}}"
+            type="text"
+            name="max_size"
+          />
+        </div>
+      </div>
+      <div class="tab-label-content number-tabs">
+        <label for="#">Number of search tags per section:</label>
+        <div class="min-max-input">
+          <input
+            value="{{settings_data.search_tags}}"
+            type="text"
+            name="search_tags"
+          />
+        </div>
+      </div>
+      <div class="tab-label-content h2-tabs">
+        <label for="#">H2 to start from:</label>
+        <div class="min-max-input">
+          <input
+            value="{{settings_data.h2_start_from}}"
+            type="text"
+            name="h2_start_from"
+          />
+        </div>
+      </div>
+      <div class="tab-label-content number-tabs h2-tabs">
+        <label for="#">Delay between API calls:</label>
+        <div class="min-max-input">
+          <input
+            value="{{settings_data.api_delay}}"
+            type="text"
+            name="api_delay"
+          />
+          <span>Second(s)</span>
+        </div>
+      </div>
+      <div class="tab-label-content h2-tabs">
+        <label for="#">Image widths:</label>
+        <div class="min-max-input">
+          <input
+            value="{{settings_data.image_width}}"
+            type="text"
+            name="image_width"
+          />
+          <span>Pixels</span>
+        </div>
+      </div>
+      <div class="tab-label-content h2-tabs">
+        <label for="#">Block quotes per article:</label>
+        <div class="min-max-input">
+          <input
+            value="{{settings_data.block_quote_per_article}}"
+            type="text"
+            name="block_quote_per_article"
+          />
+        </div>
+      </div>
+
+      <div class="tab-label-content h2-tabs quotes">
+        <label for="#">Bolded quotes per article:</label>
+        <div class="min-max-input">
+          <input
+            value="{{settings_data.bolded_quote_per_article}}"
+            type="text"
+            name="bolded_quote_per_article"
+          />
+        </div>
+      </div>
+
+      <div class="tab-label-content images-promt">
+        <label for="#">Image Prompt:</label>
+        <div class="min-max-input">
+          <textarea name="image_prompt">{{settings_data.image_prompt}}</textarea
+          >
+        </div>
+      </div>
+
+      <div class="tab-label-content images-promt">
+        <label for="#">Block quote and bolding prompt:</label>
+        <div class="min-max-input">
+          <textarea name="block_quote">{{settings_data.block_quote}}</textarea>
+        </div>
+      </div>
+
+      <div class="save-setting-btn">
+        <button type="submit">Save Setting</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

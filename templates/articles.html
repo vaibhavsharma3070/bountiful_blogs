@@ -1,0 +1,43 @@
+{% extends 'base.html' %} 
+{% block content %}
+<div id="menu2" class="tab-pane fade">
+  <table class="table-content">
+    <tr>
+      <th>AID</th>
+      <th>Article</th>
+      <th>Project</th>
+      <th>Batch</th>
+      <th>Search Tags</th>
+      <th>Images Tags</th>
+      <th>
+        <div class="table-header-title">
+          <p>Review STags</p>
+          <p>Review ITags</p>
+        </div>
+      </th>
+    </tr>
+    {% if articles_data %} 
+      {% for row in articles_data %}
+        <tr>
+          <td>{{row.id}}</td>
+          <td>{{row.name}}</td>
+          <td>{{row.project.name}}</td>
+          <td>{{row.batch}}</td>
+          <td>{% if row.search_tags %}Yes{% else %}No{% endif %}</td>
+          <td>{% if row.image_tags %}Yes{% else %}No{% endif %}</td>
+          <td>
+            <div class="table-row-btns">
+              <button>Search Tags</button>
+              <button>Image Tags</button>
+            </div>
+          </td>
+        </tr>
+      {% endfor %} 
+    {% else %}
+      <tr>
+        <td class="no_articles" colspan="7">There are no articles yet.</td>
+      </tr>
+    {% endif %}
+  </table>
+</div>
+{% endblock %}

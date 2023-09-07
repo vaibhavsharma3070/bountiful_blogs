@@ -1,0 +1,177 @@
+{% extends 'base.html' %} {% block content %} {% if message %}
+<div id="snackbar">{{ message|escapejs }}</div>
+{% endif %}
+<div id="menu1" class="tab-pane fade">
+  <div class="project-management-tab">
+    <div class="tab-label-content images-promt">
+      <label for="#">Projects</label>
+    </div>
+    <div class="select-project-box">
+      {% if project_data %} {% for row in project_data %}
+      <div class="project_item">
+        <input
+          type="radio"
+          id="{{ row.id }}"
+          name="selector"
+          class="selector-item_radio"
+        />
+        <label for="{{ row.id }}" class="selector-item_label"
+          >{{row.name}}</label
+        >
+      </div>
+      {% endfor %} {% else %}
+      <div class="selector-item">
+        <label for="radio1" class="selector-item_label"
+          >There are no projects. Click 'New Project'.</label
+        >
+      </div>
+      {% endif %}
+    </div>
+    <div>
+      <div class="project-management-btns">
+        <button class="new-btn">New Project</button>
+        <button class="load-btn">Load Project</button>
+        <a id="delete-project-link" href="{% url 'delete_project' 0 %}"
+          ><button>Delete Project</button>
+        </a>
+      </div>
+      <div class="save-project-div">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="tab-label-content open-api">
+            <label for="#">Project Name:</label>
+            <input id="project_name" name="project_name" type="text" />
+          </div>
+          <div class="tab-label-content api-key">
+            <label for="#">Project URL:</label>
+            <input id="project_url" name="project_url" type="text" />
+          </div>
+          <div class="tab-label-content api-key">
+            <label for="#">Image folder (hard disk):</label>
+            <input
+              id="image_folder"
+              name="image_folder"
+              type="file"
+              webkitdirectory
+              multiple
+              onchange="handleFileSelect(event)"
+            />
+            <div class="folder-copy-icon">
+              <i class="fa-solid fa-folder-open"></i>
+            </div>
+          </div>
+          <button type="submit">Save Project</button>
+        </form>
+      </div>
+    </div>
+    <div class="save-project-div">
+      <div class="tab-label-content open-api">
+        <label for="#">Load batch to project:</label>
+        <input type="file" webkitdirectory multiple />
+        <div class="folder-copy-icon">
+          <i class="fa-solid fa-folder-open"></i>
+        </div>
+      </div>
+      <div class="tab-label-content open-api">
+        <label for="#">Batch name:</label>
+        <input type="text" />
+      </div>
+      <div class="tab-label-content api-key">
+        <label for="#">Export articles to:</label>
+        <input type="file" webkitdirectory multiple />
+        <div class="folder-copy-icon">
+          <i class="fa-solid fa-folder-open"></i>
+        </div>
+      </div>
+      <button>Load batch</button>
+      <button>Export batch</button>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block script %}
+<script>
+  function handleFileSelect(event) {
+    console.log("event",event)
+    const files = event.target.files;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+
+      reader.onload = function() {
+          const fileContent = reader.result;
+          console.log('File Content:', fileContent);
+      };
+
+      reader.readAsDataURL(file);
+  }
+    console.log(files); // This will log the FileList object containing the selected files
+  }
+  let id = "";
+  // Get all radio buttons with class 'selector-item_radio'
+  const radioButtons = document.querySelectorAll(".selector-item_radio");
+
+  // Get the anchor element by its id
+  const deleteProjectLink = document.getElementById("delete-project-link");
+
+  // Add a click event listener to each radio button
+  radioButtons.forEach((radioButton) => {
+    radioButton.addEventListener("click", function () {
+      // Get the id of the clicked radio button
+      id = this.id;
+
+      // Update the href attribute of the anchor element
+      const newHref = deleteProjectLink.getAttribute("href").split("/");
+      newHref[2] = id; // Replace the last segment with the selected id
+      deleteProjectLink.setAttribute("href", newHref.join("/"));
+    });
+  });
+  $(document).ready(function () {
+    $(".selector-item_radio").on("change", function () {
+      const isChecked = $(this).is(":checked");
+
+      const label = $(this).siblings("label");
+
+      // Toggle the 'checked' class on the label
+
+      label.toggleClass("checked", isChecked);
+
+      // Toggle the additional classes on the links
+
+      $("#delete-project-link, .load-btn").toggleClass(
+        "delete-project-link-active load-btn-active",
+        isChecked
+      );
+
+      // Toggle the visibility of the links based on the label's checked state
+
+      if (isChecked) {
+        $(".load-btn, #delete-project-link").show();
+      } else {
+        $(".load-btn, #delete-project-link").hide();
+      }
+    });
+  });
+
+  $(".new-btn").click(function () {
+    $(".save-project-div").addClass("save-project-div-active");
+  });
+
+  $(".load-btn").click(function () {
+    $(".save-project-div").addClass("save-project-div-active");
+    $.ajax({
+      url: `/select_project/${id}/`, // URL to your Django view
+      type: "GET",
+      dataType: "json",
+      success: function (data) {
+        // Update the DOM with the loaded data
+        $("#project_name").val(data.name);
+        $("#project_url").val(data.url);
+        //$("#image_folder").val(data.image_folder);
+      },
+      error: function (xhr, status, error) {
+        console.error(error);
+      },
+    });
+  });
+</script>
+{% endblock %}
