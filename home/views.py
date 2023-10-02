@@ -7,6 +7,7 @@ import openai
 import os
 from django.core.files.base import ContentFile
 import requests
+import itertools
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -263,8 +264,6 @@ def upload_batch(request, pk):
             project=project_obj
         )
 
-        import itertools
-
         for i in batch_folder:
             article_obj = Article.objects.create(
                 created_by=request.user,
@@ -291,7 +290,7 @@ def upload_batch(request, pk):
                         result_value = bold_word(j[0], openai_key)
                         j[0] = result_value+"\n"
                         quote_count += 1
-                    if bold_count < no_of_bold_words:
+                    if bold_count < no_of_quote_words:
                         result_value = quote_word(j[0], openai_key)
                         j[0] = result_value+"\n"
                         bold_count += 1
