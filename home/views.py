@@ -10,7 +10,7 @@ import requests
 import itertools
 from django.contrib.auth.decorators import login_required
 
-@login_required
+
 def read_data(data):
     data = data.decode('utf-8')
     header = re.findall(r'@.+', data)
@@ -51,7 +51,7 @@ def read_data(data):
                                 value = ""
     return output_dict
 
-@login_required
+
 def chat_with_gpt(prompt, api_key):
     response = openai.ChatCompletion.create(
         model="gpt-4",
@@ -60,7 +60,7 @@ def chat_with_gpt(prompt, api_key):
     )
     return response['choices']
 
-@login_required
+
 def search_phrases(content, api_key, n):
     prompt = [{"role": "system", "content": "You are a helpful assistant."}]
     prompt.append({"role": "user", "content": f" {content} For the provided section of text, what illustrative scene or symbolic image best captures a central theme or emotional undertone? Return your answer as a four-word search phrase. Avoid names of conditions and brands. A couple of good examples are 'boy sits at desk' and 'plate of healthy food':"})
@@ -71,21 +71,21 @@ def search_phrases(content, api_key, n):
         return [res+"\n"]
     return [(f'({chat_with_gpt(prompt,api_key)[0]["message"]["content"][1:-1]})\n')]
 
-@login_required
+
 def bold_word(content, api_key):
     prompt = [{"role": "system", "content": "You are a helpful assistant."}]
     prompt.append({"role": "user", "content": f" {content} Please check the given paraghraph and bold up only 1 word which is most important. The original paraghraph will be provided with the bold keywords for easy identification."})
     response = chat_with_gpt(prompt, api_key)[0]["message"]["content"]
     return response
 
-@login_required
+
 def quote_word(content, api_key):
     prompt = [{"role": "system", "content": "You are a helpful assistant."}]
     prompt.append({"role": "user", "content": f" {content} Please check the given paragraph and quote only one word. Please do not quote word which is already bold. Then provide me only the entire paragraph with the quoted word."})
     response = chat_with_gpt(prompt, api_key)[0]["message"]["content"]  
     return response
 
-@login_required
+
 def phrase_to_image(api_key, search_phrase):
     # Define the endpoint URL and query parameters
     endpoint = f'https://api.pexels.com/v1/search'
@@ -274,7 +274,6 @@ def upload_batch(request, pk):
 
             # Read the file data once and avoid reading it again in the loop
             file_data = article_obj.old_article.read()
-            print("---->", read_data(file_data))
             article_obj.set_old_json(read_data(file_data))
             article_obj.save()
 
