@@ -8,4 +8,6 @@ urlpatterns = [
     path('delete_project/<str:pk>/', views.delete_project, name="delete_project"),
     path('select_project/<str:pk>/', views.select_project, name="select_project"),
     path('articles/', views.articles, name="articles"),
+    path('upload_batch/<str:pk>/', views.upload_batch, name="upload_batch"),
+    path('specific_article', views.specific_article, name="specific_article"),
 ]

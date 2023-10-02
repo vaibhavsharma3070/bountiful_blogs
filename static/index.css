@@ -678,10 +678,6 @@ tr:nth-child(even) {
     box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
 }
 
-.table-header-title p {
-    margin: 0;
-}
-
 .table-content tbody tr th {
     color: #111;
     font-size: 15px;
@@ -945,4 +941,123 @@ button.load-btn-active {
 
 .form-box-input input::placeholder {
     font-family: 'Jost', sans-serif;
+}
+
+
+.upload-btn-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+
+.btn {
+    border: 2px solid gray;
+    color: gray;
+    background-color: white;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+
+.upload-btn-wrapper input[type=file] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+.upload-button {
+    background-color: #3498db;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+
+.upload-button:hover {
+    background-color: #2980b9;
+}
+
+
+.input-file {
+    display: none;
+}
+
+
+.file-name {
+    margin-top: 10px;
+}
+
+
+.file-upload {
+    width: 500px;
+    margin: 0 auto;
+    border: 1px solid;
+    display: flex;
+    position: relative;
+    padding: 4px 8px;
+    justify-content: space-between;
+    border: 1px solid #333;
+    padding: 4px 0px 4px 4px;
+    border-radius: 3px;
+}
+
+
+.selected-files p {
+    margin: 0;
+    padding: 0;
+}
+
+
+ul#file-list {
+    margin: 0;
+    position: absolute;
+}
+
+input#upload-1, input#upload-2, input#upload-3{
+    width: 100%;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+}
+
+
+.file-input p {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background: #efefef;
+    padding: 3px 8px 3px 8px;
+    border-radius: 3px;
+    font-weight: 400;
+    border: 1px solid #767676;
+}
+
+
+.selected-files {
+    width: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.see_article{
+    text-decoration: none !important;
+    color: white !important;
+}
+
+.common_td, .common_th{
+    text-align: center;
 }

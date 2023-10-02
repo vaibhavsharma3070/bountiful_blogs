@@ -36,7 +36,11 @@
         </a>
       </div>
       <div class="save-project-div">
-        <form method="POST">
+        <form
+          action="/create_project/"
+          method="POST"
+          enctype="multipart/form-data"
+        >
           {% csrf_token %}
           <div class="tab-label-content open-api">
             <label for="#">Project Name:</label>
@@ -46,16 +50,26 @@
             <label for="#">Project URL:</label>
             <input id="project_url" name="project_url" type="text" />
           </div>
+
           <div class="tab-label-content api-key">
             <label for="#">Image folder (hard disk):</label>
-            <input
-              id="image_folder"
-              name="image_folder"
-              type="file"
-              webkitdirectory
-              multiple
-              onchange="handleFileSelect(event)"
-            />
+            <div class="file-upload">
+              <div class="file-input">
+                <p>Choose Folder</p>
+                <input
+                  type="file"
+                  id="upload-1"
+                  class="file-upload-input"
+                  webkitdirectory
+                  multiple
+                />
+              </div>
+              <div class="selected-files">
+                <p>Selected Files:</p>
+                <span id="selcted_files-1"></span>
+                <ul id="file-list-1"></ul>
+              </div>
+            </div>
             <div class="folder-copy-icon">
               <i class="fa-solid fa-folder-open"></i>
             </div>
@@ -65,47 +79,72 @@
       </div>
     </div>
     <div class="save-project-div">
-      <div class="tab-label-content open-api">
-        <label for="#">Load batch to project:</label>
-        <input type="file" webkitdirectory multiple />
-        <div class="folder-copy-icon">
-          <i class="fa-solid fa-folder-open"></i>
+      <form
+        id="load-batch"
+        action="/upload_batch/id/"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        {% csrf_token %}
+        <div class="tab-label-content open-api">
+          <label for="#">Load batch to project:</label>
+          <div class="file-upload">
+            <div class="file-input">
+              <p>Choose Folder</p>
+              <input
+                type="file"
+                id="upload-2"
+                class="file-upload-input"
+                name="batch_folder[]"
+                webkitdirectory
+                multiple
+              />
+            </div>
+            <div class="selected-files">
+              <p>Selected Files:</p>
+              <span id="selcted_files-2"></span>
+              <ul id="file-list-2"></ul>
+            </div>
+          </div>
+          <div class="folder-copy-icon">
+            <i class="fa-solid fa-folder-open"></i>
+          </div>
         </div>
-      </div>
-      <div class="tab-label-content open-api">
-        <label for="#">Batch name:</label>
-        <input type="text" />
-      </div>
-      <div class="tab-label-content api-key">
-        <label for="#">Export articles to:</label>
-        <input type="file" webkitdirectory multiple />
-        <div class="folder-copy-icon">
-          <i class="fa-solid fa-folder-open"></i>
+        <div class="tab-label-content open-api">
+          <label for="#">Batch name:</label>
+          <input name="batch_name" type="text" />
         </div>
-      </div>
-      <button>Load batch</button>
-      <button>Export batch</button>
+        <div class="tab-label-content api-key">
+          <label for="#">Export articles to:</label>
+          <div class="file-upload">
+            <div class="file-input">
+              <p>Choose Folder</p>
+              <input
+                type="file"
+                id="upload-3"
+                class="file-upload-input"
+                webkitdirectory
+                multiple
+              />
+            </div>
+            <div class="selected-files">
+              <p>Selected Files:</p>
+              <span id="selcted_files-3"></span>
+              <ul id="file-list-3"></ul>
+            </div>
+          </div>
+          <div class="folder-copy-icon">
+            <i class="fa-solid fa-folder-open"></i>
+          </div>
+        </div>
+        <button type="submit">Load batch</button>
+        <button>Export batch</button>
+      </form>
     </div>
   </div>
 </div>
 {% endblock %} {% block script %}
 <script>
-  function handleFileSelect(event) {
-    console.log("event",event)
-    const files = event.target.files;
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      const reader = new FileReader();
-
-      reader.onload = function() {
-          const fileContent = reader.result;
-          console.log('File Content:', fileContent);
-      };
-
-      reader.readAsDataURL(file);
-  }
-    console.log(files); // This will log the FileList object containing the selected files
-  }
   let id = "";
   // Get all radio buttons with class 'selector-item_radio'
   const radioButtons = document.querySelectorAll(".selector-item_radio");
@@ -123,6 +162,12 @@
       const newHref = deleteProjectLink.getAttribute("href").split("/");
       newHref[2] = id; // Replace the last segment with the selected id
       deleteProjectLink.setAttribute("href", newHref.join("/"));
+
+      // Get a reference to the form element by its ID
+      var form = document.getElementById("load-batch");
+
+      // Update the 'action' attribute
+      form.setAttribute("action", `/upload_batch/${id}/`);
     });
   });
   $(document).ready(function () {
@@ -154,6 +199,8 @@
 
   $(".new-btn").click(function () {
     $(".save-project-div").addClass("save-project-div-active");
+    $("#project_name").val("");
+    $("#project_url").val("");
   });
 
   $(".load-btn").click(function () {
@@ -166,12 +213,38 @@
         // Update the DOM with the loaded data
         $("#project_name").val(data.name);
         $("#project_url").val(data.url);
-        //$("#image_folder").val(data.image_folder);
+        $("#image_folder").val(data.images);
       },
       error: function (xhr, status, error) {
         console.error(error);
       },
     });
   });
+
+  function updateFileList(e, id) {
+    const fileList = document.getElementById("file-list-" + id);
+    fileList.innerHTML = ""; // Clear the list
+
+    const uploadInput = document.getElementById("upload-" + id);
+    const files = uploadInput.files;
+
+    if (files.length === 0) {
+      return;
+    }
+    $("#selcted_files-" + id).text(files.length);
+  }
+  const uploadInputOne = document.getElementById("upload-1");
+  uploadInputOne.addEventListener("change", (event) =>
+    updateFileList(event, 1)
+  );
+  const uploadInputTwo = document.getElementById("upload-2");
+  uploadInputTwo.addEventListener("change", (event) =>
+    updateFileList(event, 2)
+  );
+  const uploadInputThree = document.getElementById("upload-3");
+  uploadInputThree.addEventListener("change", (event) =>
+    updateFileList(event, 3)
+  );
 </script>
+
 {% endblock %}

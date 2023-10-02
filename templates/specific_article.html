@@ -1,0 +1,10 @@
+{% extends 'base.html' %} 
+{% block content %} 
+{% if message %}
+<div id="snackbar">{{ message|escapejs }}</div>
+{% endif %}
+<div>
+    <pre>{{ content }}</pre>
+</div>
+
+{% endblock content %}

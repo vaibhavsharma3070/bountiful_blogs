@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
 
 User = get_user_model()
 
@@ -56,7 +57,7 @@ def login_process(request):
         return render(request, "login.html")
     return render(request, "home.html", {'mesage': 'You are already logged in.'})
 
-
+@login_required
 def logout_process(request):
     """Logout user"""
     if request.user.is_authenticated:
