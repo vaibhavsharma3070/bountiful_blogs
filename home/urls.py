@@ -10,4 +10,7 @@ urlpatterns = [
     path('articles/', views.articles, name="articles"),
     path('upload_batch/<str:pk>/', views.upload_batch, name="upload_batch"),
     path('specific_article', views.specific_article, name="specific_article"),
+
+    path('review_logs', views.logs_review, name="review_logs"),
+
 ]

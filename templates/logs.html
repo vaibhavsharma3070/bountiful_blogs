@@ -1,0 +1,8 @@
+{% extends 'base.html' %} 
+{% block content %}
+
+{% for row in content %}
+    <p>{{row.modelname}}</p>
+{% endfor %}
+
+{% endblock %}

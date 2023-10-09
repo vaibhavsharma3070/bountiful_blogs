@@ -9,6 +9,31 @@ from django.core.files.base import ContentFile
 import requests
 import itertools
 from django.contrib.auth.decorators import login_required
+import markdown
+
+def txt_to_html(file_path,i,id):
+    # Read the text file
+    with open(file_path, 'r') as file:
+        text = file.read()
+
+    # Remove headers starting with "@" signs
+    lines = text.split('\n')
+    filtered_lines = [line for line in lines if not line.startswith('@')]
+    filtered_text = '\n'.join(filtered_lines)
+
+    # Convert the text to HTML
+    html_content = markdown.markdown(filtered_text)
+
+    with open("media/demo.html","r") as f:
+        htm=f.read()
+    new_content=htm.replace("$$$",html_content)
+
+
+
+    with open(f"media/result-i{i}-id{id}.html","w") as f:
+        f.write(new_content)
+    
+    return f"media/result-i{i}-id{id}.html"
 
 
 def read_data(data):
@@ -265,6 +290,7 @@ def upload_batch(request, pk):
         )
 
         for i in batch_folder:
+            print(i)
             article_obj = Article.objects.create(
                 created_by=request.user,
                 project=project_obj,
@@ -281,25 +307,24 @@ def upload_batch(request, pk):
             c = 0
             bold_count = 0
             quote_count = 0
-            for i, j in article_obj.get_old_json().items():
-                print("--------------->>",i,j)
+            for x, y in article_obj.get_old_json().items():
 
-                if re.match(r'^##[^#]', i):
+                if re.match(r'^##[^#]', x):
                     if quote_count < no_of_bold_words:
-                        result_value = bold_word(j[0], openai_key)
-                        j[0] = result_value+"\n"
+                        result_value = bold_word(y[0], openai_key)
+                        y[0] = result_value+"\n"
                         quote_count += 1
                     if bold_count < no_of_quote_words:
-                        result_value = quote_word(j[0], openai_key)
-                        j[0] = result_value+"\n"
+                        result_value = quote_word(y[0], openai_key)
+                        y[0] = result_value+"\n"
                         bold_count += 1
-                    temp_dict[i] = j
+                    temp_dict[x] = y
                     search_phrases_data = search_phrases(
-                        j[0], openai_key, setting_obj.search_tags)
+                        y[0], openai_key, setting_obj.search_tags)
                     image_data = phrase_to_image(setting_obj.envato_key, search_phrases_data)
                     temp_dict[f"search_phrase-{c}"] = image_data
                 else:
-                    temp_dict[i] = j
+                    temp_dict[x] = y
                 c += 1
             article_obj.set_new_json(temp_dict)
             article_obj.save()
@@ -326,8 +351,9 @@ def upload_batch(request, pk):
                         if h2_count < temp_count:
                             if "search_phrase-" not in key:
                                 f.write(key + '\n')
-                            for value in values:
-                                f.write(value + '\n')
+                            if values:
+                                for value in values:
+                                    f.write(value + '\n')
                         else:
                             if "search_phrase-" in key:
                                 pass
@@ -338,10 +364,15 @@ def upload_batch(request, pk):
 
             with open(file_path, 'r') as f:
                 article_obj.new_article.save(
-                    f'new_file-{i}.txt', ContentFile(f.read()))
+                    f'new_file-{i}', ContentFile(f.read()))
             article_obj.save()
+
+            print("-=-=->",article_obj.new_article)
             
-            file_path = os.path.join('media', f'{article_obj.new_article}')
+            file_path = f'media/{article_obj.new_article}'
+
+            article_obj.html_file = txt_to_html(file_path,i,article_obj.id)
+            article_obj.save()
 
         return redirect("articles")
 
@@ -359,3 +390,8 @@ def specific_article(request):
     with article.new_article.open('r') as file:
         content = file.read()
     return render(request, 'specific_article.html', {'text_file': article.new_article, 'content': content})
+
+
+def logs_review(request):
+    data=ReviewLogs.objects.filter(user=request.user)
+    return render(request,'logs.html',{'content':data})
